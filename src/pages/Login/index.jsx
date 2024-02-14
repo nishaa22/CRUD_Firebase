@@ -31,9 +31,9 @@ const Login = () => {
 		signInWithEmailAndPassword(auth, loginDetails.email, loginDetails.password)
 			.then((userCredential) => {
 				const user = userCredential.user;
-				console.log(user);
 				if (user) {
 					sessionStorage.setItem('token', user.accessToken);
+					sessionStorage.setItem('userId', user.uid);
 					swal('Hooorraayyy!!!', 'User logged in successfully..', 'success');
 					setLoginDetails({ email: '', password: '' });
 					navigate('/dashboard');

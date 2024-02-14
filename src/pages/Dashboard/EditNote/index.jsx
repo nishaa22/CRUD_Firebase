@@ -1,45 +1,59 @@
 import * as stylex from '@stylexjs/stylex';
 import InputField from '../../../components/InputField';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TextArea from '../../../components/TextArea';
 import Button, { OutlineButton } from '../../../components/Button';
-import { useNavigate } from 'react-router-dom';
-import { collection, addDoc, getFirestore } from 'firebase/firestore';
-const db = getFirestore();
+import { useLocation, useNavigate } from 'react-router-dom';
+import { collection, updateDoc, doc, getDocs } from 'firebase/firestore';
+import { db } from '../../../../firebaseConfig';
 
-const CreateNote = () => {
+const EditNote = () => {
 	const navigate = useNavigate();
-	const [notes, setNotes] = useState({
-		name: '',
-		description: '',
-	});
+	const location = useLocation();
+	let id = location.pathname.split('/')[2];
+	const [notes, setNotes] = useState([]);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setNotes((prev) => {
 			return {
 				...prev,
-				[name]: value,
+				id: Math.random(),
 				createdDate: new Date(),
+				[name]: value,
 			};
 		});
 	};
 
+	const getNotesData = async () => {
+		const userId = sessionStorage.getItem('userId');
+		const querySnapshot = await getDocs(
+			collection(db, `users/${userId}/notes`)
+		);
+		const newData = [];
+		querySnapshot.forEach((doc) => {
+			newData.push({ ...doc.data(), id: doc.id });
+		});
+		setNotes(newData.filter((v) => v.id == id)[0]);
+	};
+
+	useEffect(() => {
+		getNotesData();
+	}, []);
+
+	console.log(notes);
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const userId = sessionStorage.getItem('userId');
-		const docRef = await addDoc(collection(db, `users/${userId}/notes`), notes);
-		if (docRef.id) {
-			setNotes({ name: '', description: '' });
-			navigate('/dashboard');
-		}
+		await updateDoc(doc(db, `users/${userId}/notes`, id), notes);
+		navigate('/dashboard');
 	};
 
 	return (
 		<>
 			<div {...stylex.props(styles.notesContainer)}>
 				<div {...stylex.props(styles.notesBox)}>
-					<h1 {...stylex.props(styles.heading)}>Hey&#9997;, Add notes</h1>
+					<h1 {...stylex.props(styles.heading)}>Hey&#9997;, Update notes</h1>
 					<form {...stylex.props(styles.notesForm)}>
 						<InputField
 							text={'Note heading'}
@@ -62,7 +76,10 @@ const CreateNote = () => {
 								btnText={'Cancel'}
 								onClick={() => navigate('/dashboard')}
 							/>
-							<Button btnText={'Add Note'} onClick={(e) => handleSubmit(e)} />
+							<Button
+								btnText={'Update Note'}
+								onClick={(e) => handleSubmit(e)}
+							/>
 						</div>
 					</form>
 				</div>
@@ -71,7 +88,7 @@ const CreateNote = () => {
 	);
 };
 
-export default CreateNote;
+export default EditNote;
 
 const styles = stylex.create({
 	notesContainer: {

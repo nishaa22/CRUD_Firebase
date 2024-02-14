@@ -11,7 +11,7 @@ const TextArea = ({ name, text, type, placeholder, onChange, value }) => {
 					rows={'6'}
 					cols={'50'}
 					name={name}
-					// value={value}
+					value={value}
 					placeholder={placeholder}
 					onChange={onChange}
 				>

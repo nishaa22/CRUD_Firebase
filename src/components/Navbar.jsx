@@ -11,6 +11,7 @@ const Navbar = () => {
 		signOut(auth)
 			.then(() => {
 				sessionStorage.removeItem('token');
+				sessionStorage.removeItem('userId');
 				navigate('/');
 			})
 			.catch((error) => {
@@ -28,7 +29,10 @@ const Navbar = () => {
 					Create Notes
 				</li>
 			</ul>
-			<Button btnText={'Sign out'} onClick={handleLogout} />
+			<div {...stylex.props(styles.rightContainer)}>
+				<div onClick={() => navigate('/profile')}>Profile</div>
+				<Button btnText={'Sign out'} onClick={handleLogout} />
+			</div>
 		</div>
 	);
 };
@@ -49,6 +53,18 @@ const styles = stylex.create({
 		gap: '30px',
 	},
 	li: {
+		cursor: 'pointer',
+		color: '#fff',
+		':hover': {
+			fontWeight: 700,
+			fontSize: '18px',
+		},
+	},
+	rightContainer: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: '20px',
+		color: '#fff',
 		cursor: 'pointer',
 	},
 });

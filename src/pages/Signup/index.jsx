@@ -4,8 +4,9 @@ import InputField from '../../components/InputField';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
-import { auth } from '../../../firebaseConfig';
+import { auth, db } from '../../../firebaseConfig';
 import swal from 'sweetalert';
+import { addDoc, collection } from 'firebase/firestore';
 
 const Signup = () => {
 	const navigate = useNavigate();
@@ -26,15 +27,17 @@ const Signup = () => {
 		});
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		createUserWithEmailAndPassword(
+		await createUserWithEmailAndPassword(
 			auth,
 			userDetails.email,
 			userDetails.password
 		)
-			.then((userCredential) => {
+			.then(async (userCredential) => {
 				const user = userCredential.user;
+				console.log(user);
+				await addDoc(collection(db, `users/${user.uid}/details`), userDetails);
 				if (user) {
 					swal('Hooorraayyy!!!', 'User created successfully..', 'success');
 					setUserDetails({ name: '', email: '', password: '' });
