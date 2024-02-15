@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
+import { tokens } from '../../token.stylex';
 
 const InputField = ({ name, text, type, placeholder, onChange, value }) => {
 	return (
@@ -38,6 +39,6 @@ const styles = stylex.create({
 		width: '350px',
 		height: '40px',
 		fontSize: '14px',
-		borderImageSource: 'linear-gradient(45deg, #eba434, #af32e6)',
+		borderImageSource: tokens.gradiantBackground,
 	},
 });

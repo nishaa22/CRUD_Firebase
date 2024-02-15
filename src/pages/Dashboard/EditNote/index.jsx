@@ -6,6 +6,7 @@ import Button, { OutlineButton } from '../../../components/Button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { collection, updateDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
+import { tokens } from '../../../../token.stylex';
 
 const EditNote = () => {
 	const navigate = useNavigate();
@@ -95,7 +96,7 @@ const styles = stylex.create({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		background: 'linear-gradient(45deg, #eba434, #af32e6)',
+		background: tokens.gradiantBackground,
 		height: '100vh',
 	},
 	notesBox: {

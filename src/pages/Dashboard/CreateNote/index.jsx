@@ -5,6 +5,7 @@ import TextArea from '../../../components/TextArea';
 import Button, { OutlineButton } from '../../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, getFirestore } from 'firebase/firestore';
+import { tokens } from '../../../../token.stylex';
 const db = getFirestore();
 
 const CreateNote = () => {
@@ -78,7 +79,7 @@ const styles = stylex.create({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		background: 'linear-gradient(45deg, #eba434, #af32e6)',
+		background: tokens.gradiantBackground,
 		height: '100vh',
 	},
 	notesBox: {

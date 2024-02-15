@@ -7,6 +7,9 @@ import { useState } from 'react';
 import { auth, db } from '../../../firebaseConfig';
 import swal from 'sweetalert';
 import { addDoc, collection } from 'firebase/firestore';
+import { tokens } from '../../../token.stylex';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const Signup = () => {
 	const navigate = useNavigate();
@@ -15,6 +18,7 @@ const Signup = () => {
 		email: '',
 		password: '',
 	});
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleChange = (e) => {
 		const name = e.target.name;
@@ -29,6 +33,7 @@ const Signup = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setIsLoading(true);
 		await createUserWithEmailAndPassword(
 			auth,
 			userDetails.email,
@@ -37,6 +42,9 @@ const Signup = () => {
 			.then(async (userCredential) => {
 				const user = userCredential.user;
 				console.log(user);
+				if (user) {
+					setIsLoading(false);
+				}
 				await addDoc(collection(db, `users/${user.uid}/details`), userDetails);
 				if (user) {
 					swal('Hooorraayyy!!!', 'User created successfully..', 'success');
@@ -45,6 +53,7 @@ const Signup = () => {
 				}
 			})
 			.catch((error) => {
+				setIsLoading(false);
 				const errorCode = error.code;
 				swal('Oops!', errorCode, 'error');
 			});
@@ -83,7 +92,22 @@ const Signup = () => {
 							onChange={handleChange}
 						/>
 						<div {...stylex.props(styles.actionBtn)}>
-							<Button btnText={'Sign up'} />
+							<Button
+								btnText={
+									isLoading ? (
+										<Spin
+											indicator={
+												<LoadingOutlined
+													style={{ fontSize: 24, color: '#fff' }}
+													spin
+												/>
+											}
+										/>
+									) : (
+										'Sign up'
+									)
+								}
+							/>
 						</div>
 					</form>
 					<div
@@ -106,7 +130,7 @@ const styles = stylex.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		height: '100vh',
-		background: 'linear-gradient(45deg, #eba434, #af32e6)',
+		background: tokens.gradiantBackground,
 	},
 	signupBox: {
 		padding: '10px',

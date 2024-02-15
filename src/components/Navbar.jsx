@@ -3,6 +3,7 @@ import Button from './Button';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import { tokens } from '../../token.stylex';
 
 const Navbar = () => {
 	const navigate = useNavigate();
@@ -44,7 +45,7 @@ const styles = stylex.create({
 		display: 'flex',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		background: 'linear-gradient(45deg, #af32e6, #eba434)',
+		background: tokens.gradiantBackground,
 		padding: '15px 20px',
 	},
 	ul: {

@@ -6,6 +6,9 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import swal from 'sweetalert';
+import { tokens } from '../../../token.stylex';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const Login = () => {
 	// email - nisha.excellencetechnologies@gmail.com password - nisha@12345
@@ -14,6 +17,7 @@ const Login = () => {
 		email: '',
 		password: '',
 	});
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleChange = (e) => {
 		const name = e.target.name;
@@ -28,10 +32,12 @@ const Login = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		setIsLoading(true);
 		signInWithEmailAndPassword(auth, loginDetails.email, loginDetails.password)
 			.then((userCredential) => {
 				const user = userCredential.user;
 				if (user) {
+					setIsLoading(false);
 					sessionStorage.setItem('token', user.accessToken);
 					sessionStorage.setItem('userId', user.uid);
 					swal('Hooorraayyy!!!', 'User logged in successfully..', 'success');
@@ -40,11 +46,13 @@ const Login = () => {
 				}
 			})
 			.catch((error) => {
+				setIsLoading(false);
 				const errorCode = error.code;
 				// const errorMessage = error.message;
 				swal('Oops!', errorCode, 'error');
 			});
 	};
+
 	return (
 		<>
 			<div {...stylex.props(styles.loginContainer)}>
@@ -69,7 +77,22 @@ const Login = () => {
 							onChange={handleChange}
 						/>
 						<div {...stylex.props(styles.actionBtn)}>
-							<Button btnText={'Login'} />
+							<Button
+								btnText={
+									isLoading ? (
+										<Spin
+											indicator={
+												<LoadingOutlined
+													style={{ fontSize: 24, color: '#fff' }}
+													spin
+												/>
+											}
+										/>
+									) : (
+										'Login'
+									)
+								}
+							/>
 						</div>
 					</form>
 					<div
@@ -91,7 +114,7 @@ const styles = stylex.create({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		background: 'linear-gradient(45deg, #eba434, #af32e6)',
+		background: tokens.gradiantBackground,
 		height: '100vh',
 	},
 	loginBox: {

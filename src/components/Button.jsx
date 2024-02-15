@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
+import { tokens } from '../../token.stylex';
 
 const Button = ({ btnText, onClick }) => {
 	return (
@@ -24,13 +25,13 @@ const styles = stylex.create({
 		fontSize: '16px',
 		outline: 'none',
 		border: 'none',
-		background: 'linear-gradient(45deg, #eba434, #af32e6)',
+		background: tokens.gradiantBackground,
 		color: '#fff',
 		borderRadius: '10px',
 		boxShadow: '2px 2px 10px gray',
 		cursor: 'pointer',
 		':hover': {
-			background: 'linear-gradient(45deg, #af32e6, #eba434)',
+			background: tokens.hoverGradiantBackground,
 		},
 	},
 	outlineButtonContainer: {

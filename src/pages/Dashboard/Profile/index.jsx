@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { db } from '../../../../firebaseConfig';
 import Button from '../../../components/Button';
 import { useNavigate } from 'react-router-dom';
+import { tokens } from '../../../../token.stylex';
+import { Spin } from 'antd';
 
 const Profile = () => {
 	const navigate = useNavigate();
@@ -28,20 +30,28 @@ const Profile = () => {
 			<div {...stylex.props(styles.profileContainer)}>
 				<div {...stylex.props(styles.profileBox)}>
 					<h1 {...stylex.props(styles.heading)}>Your profile</h1>
-					<div {...stylex.props(styles.details)}>
-						<div>
-							Name:{' '}
-							<span {...stylex.props(styles.span)}>{userDetails.name}</span>
+					{userDetails.name ? (
+						<div {...stylex.props(styles.details)}>
+							<div>
+								Name:{' '}
+								<span {...stylex.props(styles.span)}>{userDetails.name}</span>
+							</div>
+							<div>
+								Email:{' '}
+								<span {...stylex.props(styles.span)}>{userDetails.email}</span>
+							</div>
+							<div>
+								Password:{' '}
+								<span {...stylex.props(styles.span)}>
+									{userDetails.password}
+								</span>
+							</div>
 						</div>
-						<div>
-							Email:{' '}
-							<span {...stylex.props(styles.span)}>{userDetails.email}</span>
+					) : (
+						<div style={{ margin: '20px 0px' }}>
+							<Spin size="large" />
 						</div>
-						<div>
-							Password:{' '}
-							<span {...stylex.props(styles.span)}>{userDetails.password}</span>
-						</div>
-					</div>
+					)}
 					<Button btnText={'Go back'} onClick={() => navigate('/dashboard')} />
 				</div>
 			</div>
@@ -56,7 +66,7 @@ const styles = stylex.create({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		background: 'linear-gradient(45deg, #eba434, #af32e6)',
+		background: tokens.gradiantBackground,
 		height: '100vh',
 	},
 	profileBox: {

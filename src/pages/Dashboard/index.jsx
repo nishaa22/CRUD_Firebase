@@ -5,8 +5,11 @@ import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import NoteCard from './NoteCard';
 import { db } from '../../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import { Spin, message } from 'antd';
 
 const Dashboard = () => {
+	const [messageApi, contextHolder] = message.useMessage();
+
 	const navigate = useNavigate();
 	const [notesData, setNotesData] = useState([]);
 	const [userDetails, setUserDetails] = useState([]);
@@ -45,6 +48,10 @@ const Dashboard = () => {
 		console.log(id);
 		const userId = sessionStorage.getItem('userId');
 		await deleteDoc(doc(db, `users/${userId}/notes`, id));
+		messageApi.open({
+			type: 'success',
+			content: 'Deleted Successfully....',
+		});
 		getNotesData();
 	};
 
@@ -54,29 +61,45 @@ const Dashboard = () => {
 
 	return (
 		<div {...stylex.props(styles.dashboardContainer)}>
+			{contextHolder}
 			<div>
 				<Navbar />
-				<div {...stylex.props(styles.container)}>
-					{userDetails.name && (
-						<div {...stylex.props(styles.heading)}>
-							Hellooo!!&nbsp;
-							<span {...stylex.props(styles.username)}>{userDetails.name}</span>
-							, Welcome to Notes App
+				{notesData && userDetails.name ? (
+					<div {...stylex.props(styles.container)}>
+						{userDetails.name && (
+							<div {...stylex.props(styles.heading)}>
+								Hellooo!!&nbsp;
+								<span {...stylex.props(styles.username)}>
+									{userDetails.name}
+								</span>
+								, Welcome to Notes App
+							</div>
+						)}
+						<div {...stylex.props(styles.notesContainer)}>
+							{notesData.map((d) => {
+								return (
+									<NoteCard
+										key={d.id}
+										data={d}
+										handleDelete={handleDelete}
+										handleEdit={handleEdit}
+									/>
+								);
+							})}
 						</div>
-					)}
-					<div {...stylex.props(styles.notesContainer)}>
-						{notesData.map((d) => {
-							return (
-								<NoteCard
-									key={d.id}
-									data={d}
-									handleDelete={handleDelete}
-									handleEdit={handleEdit}
-								/>
-							);
-						})}
 					</div>
-				</div>
+				) : (
+					<div
+						style={{
+							margin: '200px 0px',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}
+					>
+						<Spin size="large" />
+					</div>
+				)}
 			</div>
 		</div>
 	);
@@ -87,7 +110,7 @@ export default Dashboard;
 const styles = stylex.create({
 	dashboardContainer: {
 		height: '100vh',
-		background: 'pink',
+		// background: 'pink',
 		overflowY: 'scroll',
 	},
 	heading: {
