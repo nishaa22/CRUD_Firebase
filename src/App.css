@@ -3,3 +3,7 @@
   margin: 0;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
+
+:where(.css-dev-only-do-not-override-1xg9z9n).ant-select .ant-select-arrow {
+  display: none !important;
+}

@@ -6,7 +6,7 @@ import Button, { OutlineButton } from '../../../components/Button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { collection, updateDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
-import { tokens } from '../../../../token.stylex';
+import { animations, tokens } from '../../../../token.stylex';
 
 const EditNote = () => {
 	const navigate = useNavigate();
@@ -52,7 +52,7 @@ const EditNote = () => {
 
 	return (
 		<>
-			<div {...stylex.props(styles.notesContainer)}>
+			<div {...stylex.props([styles.notesContainer, styles.fadeIn])}>
 				<div {...stylex.props(styles.notesBox)}>
 					<h1 {...stylex.props(styles.heading)}>Hey&#9997;, Update notes</h1>
 					<form {...stylex.props(styles.notesForm)}>
@@ -92,6 +92,10 @@ const EditNote = () => {
 export default EditNote;
 
 const styles = stylex.create({
+	fadeIn: {
+		animationName: animations.fadeIn,
+		animationDuration: '1s',
+	},
 	notesContainer: {
 		display: 'flex',
 		justifyContent: 'center',

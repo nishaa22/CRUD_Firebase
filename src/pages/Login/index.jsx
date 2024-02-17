@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import swal from 'sweetalert';
-import { tokens } from '../../../token.stylex';
+import { animations, tokens } from '../../../token.stylex';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -36,6 +36,7 @@ const Login = () => {
 		signInWithEmailAndPassword(auth, loginDetails.email, loginDetails.password)
 			.then((userCredential) => {
 				const user = userCredential.user;
+				console.log(user, 'KKKusrr');
 				if (user) {
 					setIsLoading(false);
 					sessionStorage.setItem('token', user.accessToken);
@@ -55,9 +56,11 @@ const Login = () => {
 
 	return (
 		<>
-			<div {...stylex.props(styles.loginContainer)}>
+			<div {...stylex.props([styles.loginContainer, styles.fadeIn])}>
 				<div {...stylex.props(styles.loginBox)}>
-					<h1 {...stylex.props(styles.heading)}>Hey&#128075; , Please Login</h1>
+					<h1 {...stylex.props([styles.heading, styles.pulse])}>
+						Hey&#128075;, Please Login
+					</h1>
 					<form
 						{...stylex.props(styles.loginForm)}
 						onSubmit={(e) => handleSubmit(e)}
@@ -96,10 +99,19 @@ const Login = () => {
 						</div>
 					</form>
 					<div
-						{...stylex.props(styles.signupLink)}
-						onClick={() => navigate('/signup')}
+						onClick={() => navigate('/forgot-password')}
+						{...stylex.props(styles.forgotPassword)}
 					>
-						Haven&rsquo;t registered yet? Signup
+						Forgot password ?
+					</div>
+					<div {...stylex.props(styles.signupLink)}>
+						Haven&rsquo;t registered yet?&nbsp;
+						<span
+							onClick={() => navigate('/signup')}
+							{...stylex.props(styles.span)}
+						>
+							Signup
+						</span>
 					</div>
 				</div>
 			</div>
@@ -110,6 +122,15 @@ const Login = () => {
 export default Login;
 
 const styles = stylex.create({
+	fadeIn: {
+		animationName: animations.fadeIn,
+		animationDuration: '1s',
+	},
+	pulse: {
+		animationName: animations.pulse,
+		animationDuration: '1s',
+		animationIterationCount: 'infinite',
+	},
 	loginContainer: {
 		display: 'flex',
 		justifyContent: 'center',
@@ -120,7 +141,7 @@ const styles = stylex.create({
 	loginBox: {
 		padding: '10px',
 		width: '500px',
-		height: '360px',
+		height: '380px',
 		borderRadius: '10px',
 		background: 'white',
 		boxShadow: '3px 1px 10px lightgray',
@@ -140,6 +161,18 @@ const styles = stylex.create({
 		marginTop: '20px',
 	},
 	signupLink: {
+		textAlign: 'center',
+		margin: '10px 0px',
+		fontSize: '14px',
+		color: 'gray',
+	},
+	forgotPassword: {
+		textAlign: 'center',
+		cursor: 'pointer',
+		margin: '10px 0px',
+		fontSize: '14px',
+	},
+	span: {
 		textAlign: 'center',
 		margin: '10px 0px',
 		fontSize: '14px',

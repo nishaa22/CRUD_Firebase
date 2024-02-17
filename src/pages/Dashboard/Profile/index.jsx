@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { db } from '../../../../firebaseConfig';
 import Button from '../../../components/Button';
 import { useNavigate } from 'react-router-dom';
-import { tokens } from '../../../../token.stylex';
+import { animations, tokens } from '../../../../token.stylex';
 import { Spin } from 'antd';
 
 const Profile = () => {
@@ -27,7 +27,7 @@ const Profile = () => {
 	}, []);
 	return (
 		<>
-			<div {...stylex.props(styles.profileContainer)}>
+			<div {...stylex.props([styles.profileContainer, styles.fadeIn])}>
 				<div {...stylex.props(styles.profileBox)}>
 					<h1 {...stylex.props(styles.heading)}>Your profile</h1>
 					{userDetails.name ? (
@@ -46,6 +46,10 @@ const Profile = () => {
 									{userDetails.password}
 								</span>
 							</div>
+							<div>
+								Role:{' '}
+								<span {...stylex.props(styles.span)}>{userDetails.role}</span>
+							</div>
 						</div>
 					) : (
 						<div style={{ margin: '20px 0px' }}>
@@ -62,6 +66,10 @@ const Profile = () => {
 export default Profile;
 
 const styles = stylex.create({
+	fadeIn: {
+		animationName: animations.fadeIn,
+		animationDuration: '1s',
+	},
 	profileContainer: {
 		display: 'flex',
 		justifyContent: 'center',
@@ -71,7 +79,7 @@ const styles = stylex.create({
 	},
 	profileBox: {
 		padding: '10px',
-		width: '400px',
+		width: '500px',
 		borderRadius: '10px',
 		background: 'white',
 		boxShadow: '3px 1px 10px lightgray',

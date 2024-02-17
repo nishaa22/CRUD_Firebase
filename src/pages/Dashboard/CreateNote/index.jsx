@@ -5,7 +5,7 @@ import TextArea from '../../../components/TextArea';
 import Button, { OutlineButton } from '../../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, getFirestore } from 'firebase/firestore';
-import { tokens } from '../../../../token.stylex';
+import { animations, tokens } from '../../../../token.stylex';
 const db = getFirestore();
 
 const CreateNote = () => {
@@ -38,7 +38,7 @@ const CreateNote = () => {
 
 	return (
 		<>
-			<div {...stylex.props(styles.notesContainer)}>
+			<div {...stylex.props([styles.notesContainer, styles.fadeIn])}>
 				<div {...stylex.props(styles.notesBox)}>
 					<h1 {...stylex.props(styles.heading)}>Hey&#9997;, Add notes</h1>
 					<form {...stylex.props(styles.notesForm)}>
@@ -75,6 +75,10 @@ const CreateNote = () => {
 export default CreateNote;
 
 const styles = stylex.create({
+	fadeIn: {
+		animationName: animations.fadeIn,
+		animationDuration: '1s',
+	},
 	notesContainer: {
 		display: 'flex',
 		justifyContent: 'center',

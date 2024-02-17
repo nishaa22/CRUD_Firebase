@@ -6,13 +6,15 @@ import NoteCard from './NoteCard';
 import { db } from '../../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { Spin, message } from 'antd';
+import AdminNavbar from '../../components/AdminNav';
 
 const Dashboard = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const navigate = useNavigate();
 	const [notesData, setNotesData] = useState([]);
-	const [userDetails, setUserDetails] = useState([]);
+	const [userDetails, setUserDetails] = useState({});
+	const [isDeleted, setIsDeleted] = useState(false);
 
 	const getNotesData = async () => {
 		const userId = sessionStorage.getItem('userId');
@@ -26,6 +28,7 @@ const Dashboard = () => {
 		});
 		setNotesData(newData);
 	};
+
 	const getUserDetails = async () => {
 		const userId = sessionStorage.getItem('userId');
 		const querySnapshot = await getDocs(
@@ -48,6 +51,7 @@ const Dashboard = () => {
 		console.log(id);
 		const userId = sessionStorage.getItem('userId');
 		await deleteDoc(doc(db, `users/${userId}/notes`, id));
+		setIsDeleted(true);
 		messageApi.open({
 			type: 'success',
 			content: 'Deleted Successfully....',
@@ -58,50 +62,76 @@ const Dashboard = () => {
 	const handleEdit = async (id) => {
 		navigate(`/edit-note/${id}`);
 	};
-
+	console.log(userDetails, 'userDetails@@@');
 	return (
-		<div {...stylex.props(styles.dashboardContainer)}>
-			{contextHolder}
-			<div>
-				<Navbar />
-				{notesData && userDetails.name ? (
-					<div {...stylex.props(styles.container)}>
-						{userDetails.name && (
-							<div {...stylex.props(styles.heading)}>
-								Hellooo!!&nbsp;
-								<span {...stylex.props(styles.username)}>
-									{userDetails.name}
-								</span>
-								, Welcome to Notes App
+		<>
+			<div {...stylex.props(styles.dashboardContainer)}>
+				{contextHolder}
+				{Object.keys(userDetails).length ? (
+					userDetails && userDetails.role == 'admin' ? (
+						<div>
+							<AdminNavbar />
+							<div {...stylex.props(styles.container)}>
+								{userDetails.name && (
+									<div {...stylex.props(styles.heading)}>
+										Hellooo!!&nbsp;
+										<span {...stylex.props(styles.username)}>
+											{userDetails.name}
+										</span>
+										, Welcome to Notes App
+									</div>
+								)}
 							</div>
-						)}
-						<div {...stylex.props(styles.notesContainer)}>
-							{notesData.map((d) => {
-								return (
-									<NoteCard
-										key={d.id}
-										data={d}
-										handleDelete={handleDelete}
-										handleEdit={handleEdit}
-									/>
-								);
-							})}
 						</div>
-					</div>
+					) : (
+						<div>
+							<Navbar />
+							{notesData && userDetails.name ? (
+								<div {...stylex.props(styles.container)}>
+									{userDetails.name && (
+										<div {...stylex.props(styles.heading)}>
+											Hellooo!!&nbsp;
+											<span {...stylex.props(styles.username)}>
+												{userDetails.name}
+											</span>
+											, Welcome to Notes App
+										</div>
+									)}
+									<div {...stylex.props(styles.notesContainer)}>
+										{notesData.map((d) => {
+											return (
+												<NoteCard
+													key={d.id}
+													data={d}
+													handleDelete={handleDelete}
+													handleEdit={handleEdit}
+													isDeleted={isDeleted}
+												/>
+											);
+										})}
+									</div>
+								</div>
+							) : (
+								<div
+									style={{
+										margin: '200px 0px',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}
+								>
+									<Spin size="large" />
+								</div>
+							)}
+						</div>
+					)
 				) : (
-					<div
-						style={{
-							margin: '200px 0px',
-							display: 'flex',
-							justifyContent: 'center',
-							alignItems: 'center',
-						}}
-					>
+					<div {...stylex.props(styles.loader)}>
 						<Spin size="large" />
 					</div>
 				)}
 			</div>
-		</div>
+		</>
 	);
 };
 
@@ -110,7 +140,6 @@ export default Dashboard;
 const styles = stylex.create({
 	dashboardContainer: {
 		height: '100vh',
-		// background: 'pink',
 		overflowY: 'scroll',
 	},
 	heading: {
@@ -130,5 +159,11 @@ const styles = stylex.create({
 		display: 'flex',
 		flexWrap: 'wrap',
 		justifyContent: 'center',
+	},
+	loader: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginTop: 300,
 	},
 });

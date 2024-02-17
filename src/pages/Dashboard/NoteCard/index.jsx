@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { ColorPicker, Tooltip } from 'antd';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
+import { animations } from '../../../../token.stylex';
 
-const NoteCard = ({ data, handleDelete, handleEdit }) => {
+const NoteCard = ({ data, handleDelete, handleEdit, isDeleted }) => {
 	const { id, name, description, cardColor, createdDate } = data;
 	let noteDate = new Date(
 		createdDate.seconds * 1000 + createdDate.nanoseconds / 1000000
@@ -24,23 +25,23 @@ const NoteCard = ({ data, handleDelete, handleEdit }) => {
 		return hex.toUpperCase();
 	}
 
-	const getCardColor = async (userId, id) => {
-		try {
-			const docRef = doc(db, `users/${userId}/notes`, id);
-			console.log(docRef, 'KKK');
-			const docSnap = await getDoc(docRef);
-			if (docSnap.exists()) {
-				const notes = docSnap.data();
-				const cardColor = notes.cardColor;
-				console.log('KKKKKKKK');
-				return cardColor;
-			} else {
-				return null;
-			}
-		} catch (error) {
-			return null;
-		}
-	};
+	// const getCardColor = async (userId, id) => {
+	// 	try {
+	// 		const docRef = doc(db, `users/${userId}/notes`, id);
+	// 		console.log(docRef, 'KKK');
+	// 		const docSnap = await getDoc(docRef);
+	// 		if (docSnap.exists()) {
+	// 			const notes = docSnap.data();
+	// 			const cardColor = notes.cardColor;
+	// 			console.log('KKKKKKKK');
+	// 			return cardColor;
+	// 		} else {
+	// 			return null;
+	// 		}
+	// 	} catch (error) {
+	// 		return null;
+	// 	}
+	// };
 
 	const updateCardColor = async () => {
 		try {
@@ -64,11 +65,11 @@ const NoteCard = ({ data, handleDelete, handleEdit }) => {
 		}
 	};
 
-	// useEffect(() => {
-	// 	if (color) {
-	// 		updateCardColor();
-	// 	}
-	// }, [color]);
+	useEffect(() => {
+		if (color) {
+			updateCardColor();
+		}
+	}, [color]);
 
 	// useEffect(() => {
 	// 	if (cardColor || color) {
@@ -79,7 +80,10 @@ const NoteCard = ({ data, handleDelete, handleEdit }) => {
 
 	return (
 		<div
-			{...stylex.props(styles.cardContainer)}
+			{...stylex.props([
+				styles.cardContainer,
+				isDeleted ? styles.fadeOut : styles.fadeIn,
+			])}
 			style={{ background: color ? color : cardColor }}
 		>
 			<div>
@@ -118,6 +122,14 @@ const NoteCard = ({ data, handleDelete, handleEdit }) => {
 export default NoteCard;
 
 const styles = stylex.create({
+	fadeIn: {
+		animationName: animations.fadeIn,
+		animationDuration: '1s',
+	},
+	fadeOut: {
+		animationName: animations.fadeOut,
+		animationDuration: '1s',
+	},
 	cardContainer: {
 		width: '300px',
 		// background: '#fff',
