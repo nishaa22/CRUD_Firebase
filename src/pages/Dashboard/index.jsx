@@ -15,6 +15,7 @@ const Dashboard = () => {
 	const [notesData, setNotesData] = useState([]);
 	const [userDetails, setUserDetails] = useState({});
 	const [isDeleted, setIsDeleted] = useState(false);
+	const [adminDetails, setAdminDetails] = useState({});
 
 	const getNotesData = async () => {
 		const userId = sessionStorage.getItem('userId');
@@ -41,10 +42,23 @@ const Dashboard = () => {
 		});
 		setUserDetails(newData[0]);
 	};
+	const getAdminDetails = async () => {
+		const userId = sessionStorage.getItem('userId');
+		const querySnapshot = await getDocs(
+			collection(db, `admin/${userId}/details`)
+		);
+		const newData = [];
+		querySnapshot.forEach((doc) => {
+			newData.push({ ...doc.data(), id: doc.id });
+			// console.log(doc.id, ' => ', doc.data());
+		});
+		setAdminDetails(newData[0]);
+	};
 
 	useEffect(() => {
 		getNotesData();
 		getUserDetails();
+		getAdminDetails();
 	}, []);
 
 	const handleDelete = async (id) => {
@@ -62,15 +76,30 @@ const Dashboard = () => {
 	const handleEdit = async (id) => {
 		navigate(`/edit-note/${id}`);
 	};
-	console.log(userDetails, 'userDetails@@@');
+	console.log(userDetails, adminDetails, 'userDetails@@@');
 	return (
 		<>
 			<div {...stylex.props(styles.dashboardContainer)}>
 				{contextHolder}
-				{Object.keys(userDetails).length ? (
-					userDetails && userDetails.role == 'admin' ? (
-						<div>
-							<AdminNavbar />
+				{adminDetails ? (
+					<div>
+						<AdminNavbar />
+						<div {...stylex.props(styles.container)}>
+							{adminDetails.name && (
+								<div {...stylex.props(styles.heading)}>
+									Hellooo!!&nbsp;
+									<span {...stylex.props(styles.username)}>
+										{adminDetails.name}
+									</span>
+									, Welcome to Notes App
+								</div>
+							)}
+						</div>
+					</div>
+				) : (
+					<div>
+						<Navbar />
+						{notesData && userDetails.name ? (
 							<div {...stylex.props(styles.container)}>
 								{userDetails.name && (
 									<div {...stylex.props(styles.heading)}>
@@ -81,55 +110,37 @@ const Dashboard = () => {
 										, Welcome to Notes App
 									</div>
 								)}
+								<div {...stylex.props(styles.notesContainer)}>
+									{notesData.map((d) => {
+										return (
+											<NoteCard
+												key={d.id}
+												data={d}
+												handleDelete={handleDelete}
+												handleEdit={handleEdit}
+												isDeleted={isDeleted}
+											/>
+										);
+									})}
+								</div>
 							</div>
-						</div>
-					) : (
-						<div>
-							<Navbar />
-							{notesData && userDetails.name ? (
-								<div {...stylex.props(styles.container)}>
-									{userDetails.name && (
-										<div {...stylex.props(styles.heading)}>
-											Hellooo!!&nbsp;
-											<span {...stylex.props(styles.username)}>
-												{userDetails.name}
-											</span>
-											, Welcome to Notes App
-										</div>
-									)}
-									<div {...stylex.props(styles.notesContainer)}>
-										{notesData.map((d) => {
-											return (
-												<NoteCard
-													key={d.id}
-													data={d}
-													handleDelete={handleDelete}
-													handleEdit={handleEdit}
-													isDeleted={isDeleted}
-												/>
-											);
-										})}
-									</div>
-								</div>
-							) : (
-								<div
-									style={{
-										margin: '200px 0px',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<Spin size="large" />
-								</div>
-							)}
-						</div>
-					)
-				) : (
-					<div {...stylex.props(styles.loader)}>
-						<Spin size="large" />
+						) : (
+							<div
+								style={{
+									margin: '200px 0px',
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+								}}
+							>
+								<Spin size="large" />
+							</div>
+						)}
 					</div>
 				)}
+				{/* <div {...stylex.props(styles.loader)}>
+						<Spin size="large" />
+					</div> */}
 			</div>
 		</>
 	);

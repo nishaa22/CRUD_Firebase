@@ -7,6 +7,7 @@ const firebaseConfig = {
 	authDomain: 'crudfirebasestylex.firebaseapp.com',
 	projectId: 'crudfirebasestylex',
 	storageBucket: 'crudfirebasestylex.appspot.com',
+	databaseURL: 'https://crudfirebasestylex-default-rtdb.firebaseio.com',
 	messagingSenderId: '493787211949',
 	appId: '1:493787211949:web:c6e1a65098a55313e6be24',
 	measurementId: 'G-W6XZHMMJXC',
